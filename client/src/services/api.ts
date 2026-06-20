@@ -8,10 +8,17 @@ import type {
 
 const DEFAULT_API_BASE = "https://analytics-tracker-app.onrender.com/api";
 
-const API_BASE = (import.meta.env.VITE_API_BASE ?? DEFAULT_API_BASE).replace(
-  /\/$/,
-  "",
+function normalizeApiBase(value: string) {
+  const base = value.trim().replace(/\/+$/, "");
+  return base.endsWith("/api") ? base : `${base}/api`;
+}
+
+export const API_BASE = normalizeApiBase(
+  import.meta.env.VITE_API_BASE ?? DEFAULT_API_BASE,
 );
+
+export const BACKEND_BASE_URL = API_BASE.replace(/\/api$/, "");
+export const DEMO_URL = `${BACKEND_BASE_URL}/demo/index.html`;
 
 async function getJson<T>(path: string): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`);

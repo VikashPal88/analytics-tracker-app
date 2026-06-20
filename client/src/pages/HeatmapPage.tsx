@@ -1,9 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { Map } from "lucide-react";
-import { fetchHeatmapData, fetchPages } from "../services/api";
+import { DEMO_URL, fetchHeatmapData, fetchPages } from "../services/api";
 import type { HeatmapClick, PageSummary } from "../types/event";
-
-const demoUrl = "http://localhost:5000/demo/index.html";
 
 function hasCoordinates(
   click: HeatmapClick,
@@ -159,7 +157,7 @@ export default function HeatmapPage() {
             </p>
             {!loading && urls.length === 0 && (
               <a
-                href={demoUrl}
+                href={DEMO_URL}
                 target="_blank"
                 rel="noreferrer"
                 className="mt-6 text-emerald-400 bg-emerald-500/10 px-4 py-2 rounded-md hover:bg-emerald-500/20 border border-emerald-500/20 transition-colors font-medium"

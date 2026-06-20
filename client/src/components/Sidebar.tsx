@@ -1,7 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { Activity, LayoutDashboard, Map, MonitorPlay } from "lucide-react";
-
-const demoUrl = "http://localhost:5000/demo/index.html";
+import { DEMO_URL } from "../services/api";
 
 const navItems = [
   { to: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -43,7 +42,7 @@ export default function Sidebar() {
 
         <div className="p-4 border-t border-white/10">
           <a
-            href={demoUrl}
+            href={DEMO_URL}
             target="_blank"
             rel="noreferrer"
             className="flex items-center space-x-3 px-3 py-2 bg-white/5 text-slate-300 hover:bg-white/10 rounded-md transition-colors border border-white/10"
@@ -70,7 +69,7 @@ export default function Sidebar() {
           </NavLink>
         ))}
         <a
-          href={demoUrl}
+          href={DEMO_URL}
           target="_blank"
           rel="noreferrer"
           className="flex flex-1 flex-col items-center justify-center gap-1 px-3 py-3 text-xs font-medium text-slate-400"
