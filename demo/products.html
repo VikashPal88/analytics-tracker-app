@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaTech — Products</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-brand">NovaTech</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="products.html" class="active">Products</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+  </nav>
+
+  <!-- Products Section -->
+  <section class="section">
+    <h2 class="section-title">Our products</h2>
+    <p class="section-subtitle">
+      Explore our full range of premium technology products.
+    </p>
+    <div class="grid">
+      <div class="card" id="prod-watch">
+        <div class="card-image">⌚</div>
+        <h3>Nova Watch Pro</h3>
+        <p>Health tracking, GPS, always-on display, 7-day battery.</p>
+        <span class="card-price">$299</span>
+        <div class="card-actions">
+          <button class="btn btn-secondary btn-small" id="add-watch-btn" data-product="Nova Watch Pro">Add to cart</button>
+          <button class="btn btn-primary btn-small" id="buy-watch-btn" data-product="Nova Watch Pro">Buy now</button>
+        </div>
+      </div>
+      <div class="card" id="prod-headphones">
+        <div class="card-image">🎧</div>
+        <h3>SoundWave Ultra</h3>
+        <p>40-hour battery, spatial audio, premium noise cancellation.</p>
+        <span class="card-price">$199</span>
+        <div class="card-actions">
+          <button class="btn btn-secondary btn-small" id="add-headphones-btn" data-product="SoundWave Ultra">Add to cart</button>
+          <button class="btn btn-primary btn-small" id="buy-headphones-btn" data-product="SoundWave Ultra">Buy now</button>
+        </div>
+      </div>
+      <div class="card" id="prod-tablet">
+        <div class="card-image">📱</div>
+        <h3>NovaPad Mini</h3>
+        <p>8.4" OLED, all-day battery, pencil support.</p>
+        <span class="card-price">$449</span>
+        <div class="card-actions">
+          <button class="btn btn-secondary btn-small" id="add-tablet-btn" data-product="NovaPad Mini">Add to cart</button>
+          <button class="btn btn-primary btn-small" id="buy-tablet-btn" data-product="NovaPad Mini">Buy now</button>
+        </div>
+      </div>
+      <div class="card" id="prod-speaker">
+        <div class="card-image">🔊</div>
+        <h3>EchoSphere</h3>
+        <p>360° sound, voice assistant, multi-room audio.</p>
+        <span class="card-price">$149</span>
+        <div class="card-actions">
+          <button class="btn btn-secondary btn-small" id="add-speaker-btn" data-product="EchoSphere">Add to cart</button>
+          <button class="btn btn-primary btn-small" id="buy-speaker-btn" data-product="EchoSphere">Buy now</button>
+        </div>
+      </div>
+      <div class="card" id="prod-camera">
+        <div class="card-image">📸</div>
+        <h3>LensPro 4K</h3>
+        <p>Professional-grade camera, 4K60fps, AI autofocus.</p>
+        <span class="card-price">$599</span>
+        <div class="card-actions">
+          <button class="btn btn-secondary btn-small" id="add-camera-btn" data-product="LensPro 4K">Add to cart</button>
+          <button class="btn btn-primary btn-small" id="buy-camera-btn" data-product="LensPro 4K">Buy now</button>
+        </div>
+      </div>
+      <div class="card" id="prod-keyboard">
+        <div class="card-image">⌨️</div>
+        <h3>TypeMaster Elite</h3>
+        <p>Mechanical switches, backlighting, wireless connectivity.</p>
+        <span class="card-price">$129</span>
+        <div class="card-actions">
+          <button class="btn btn-secondary btn-small" id="add-keyboard-btn" data-product="TypeMaster Elite">Add to cart</button>
+          <button class="btn btn-primary btn-small" id="buy-keyboard-btn" data-product="TypeMaster Elite">Buy now</button>
+        </div>
+      </div>
+      <div class="card" id="prod-charger">
+        <div class="card-image">🔋</div>
+        <h3>PowerVault 20K</h3>
+        <p>20,000mAh capacity, 65W fast charging, airline approved.</p>
+        <span class="card-price">$79</span>
+        <div class="card-actions">
+          <button class="btn btn-secondary btn-small" id="add-charger-btn" data-product="PowerVault 20K">Add to cart</button>
+          <button class="btn btn-primary btn-small" id="buy-charger-btn" data-product="PowerVault 20K">Buy now</button>
+        </div>
+      </div>
+      <div class="card" id="prod-vr">
+        <div class="card-image">🥽</div>
+        <h3>NovVR One</h3>
+        <p>Mixed reality headset, hand tracking, 4K per eye.</p>
+        <span class="card-price">$399</span>
+        <div class="card-actions">
+          <button class="btn btn-secondary btn-small" id="add-vr-btn" data-product="NovVR One">Add to cart</button>
+          <button class="btn btn-primary btn-small" id="buy-vr-btn" data-product="NovVR One">Buy now</button>
+        </div>
+      </div>
+      <div class="card" id="prod-drone">
+        <div class="card-image">🛸</div>
+        <h3>SkyCraft Mini</h3>
+        <p>Ultra-portable drone, 4K camera, 30-min flight time.</p>
+        <span class="card-price">$349</span>
+        <div class="card-actions">
+          <button class="btn btn-secondary btn-small" id="add-drone-btn" data-product="SkyCraft Mini">Add to cart</button>
+          <button class="btn btn-primary btn-small" id="buy-drone-btn" data-product="SkyCraft Mini">Buy now</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <h2>Can't decide?</h2>
+    <p>Take our quick quiz to find the perfect product for you.</p>
+    <button class="btn btn-primary" id="quiz-btn">Take the quiz →</button>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2026 NovaTech — demo page for CausalFunnel analytics tracker</p>
+  </footer>
+
+  <div class="tracker-badge">CF Tracker active</div>
+
+  <script src="/tracker/cf-tracker.js" data-endpoint="/api/events"></script>
+</body>
+
+</html>
