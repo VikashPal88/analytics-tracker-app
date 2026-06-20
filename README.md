@@ -69,6 +69,12 @@ Create `client/.env.local`:
 VITE_API_BASE=http://localhost:5000/api
 ```
 
+If you want to use the hosted backend instead, use:
+
+```env
+VITE_API_BASE=https://analytics-tracker-app.onrender.com/api
+```
+
 Then run:
 
 ```bash
@@ -104,7 +110,11 @@ Add this script to any page:
 ></script>
 ```
 
-For hosted usage, replace `localhost:5000` with the deployed backend URL.
+Hosted backend:
+
+```text
+https://analytics-tracker-app.onrender.com
+```
 
 ## Dashboard Pages
 
@@ -153,22 +163,22 @@ MONGODB_URI=your_mongodb_atlas_connection_string
 
 Render provides `PORT` automatically. Keep `PORT=5000` only for local development.
 
-After deploy, Render gives a URL like:
+Your current Render backend URL is:
 
 ```text
-https://your-api.onrender.com
+https://analytics-tracker-app.onrender.com
 ```
 
 Test:
 
 ```text
-https://your-api.onrender.com/api/health
+https://analytics-tracker-app.onrender.com/api/health
 ```
 
 Hosted demo pages:
 
 ```text
-https://your-api.onrender.com/demo/products.html
+https://analytics-tracker-app.onrender.com/demo/products.html
 ```
 
 ### 3. Deploy Frontend on Vercel
@@ -188,8 +198,10 @@ Output Directory: dist
 Add environment variable:
 
 ```env
-VITE_API_BASE=https://your-api.onrender.com/api
+VITE_API_BASE=https://analytics-tracker-app.onrender.com/api
 ```
+
+This value is also included in `client/.env.production`, so the frontend has a safe default for production builds.
 
 Deploy and open the Vercel URL.
 
@@ -198,7 +210,7 @@ Deploy and open the Vercel URL.
 Open:
 
 ```text
-https://your-api.onrender.com/demo/products.html
+https://analytics-tracker-app.onrender.com/demo/products.html
 ```
 
 Click product cards, `Add to cart`, and `Buy now` buttons. Then open the frontend dashboard and refresh.
