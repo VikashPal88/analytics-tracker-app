@@ -7,7 +7,6 @@ router.post("/events", async (req, res) => {
   try {
     const events = Array.isArray(req.body) ? req.body : [req.body];
 
-    // Validate that all required fields are present
     for (const event of events) {
       if (!event.session_id || !event.event_type || !event.page_url) {
         return res.status(400).json({
@@ -16,7 +15,8 @@ router.post("/events", async (req, res) => {
       }
     }
 
-    const savedEvents = await Event.insertMany(events);
+    const savedEvents = await Event.create(events);
+
     res.status(201).json({
       message: `${savedEvents.length} event(s) recorded`,
       count: savedEvents.length,
@@ -27,31 +27,72 @@ router.post("/events", async (req, res) => {
   }
 });
 
+router.delete("/events/:sessionId", async (req, res) => {
+  try {
+    const deleted = await Event.deleteMany({
+      session_id: req.params.sessionId,
+    });
+
+    if (deleted.deletedCount === 0) {
+      return res.status(404).json({ error: "Session not found" });
+    }
+
+    res.json({
+      message: "Session events deleted",
+      deletedCount: deleted.deletedCount,
+    });
+  } catch (error) {
+    console.error("Error deleting session events:", error);
+    res.status(500).json({ error: "Failed to delete session events" });
+  }
+});
+
 router.get("/sessions", async (req, res) => {
   try {
-    const sessions = await Event.aggregate([
-      {
-        $group: {
-          _id: "$session_id",
-          total_events: { $sum: 1 },
-          page_views: {
-            $sum: { $cond: [{ $eq: ["$event_type", "page_view"] }, 1, 0] },
-          },
-          clicks: {
-            $sum: { $cond: [{ $eq: ["$event_type", "click"] }, 1, 0] },
-          },
-          first_seen: { $min: "$timestamp" },
-          last_seen: { $max: "$timestamp" },
-          pages_visited: { $addToSet: "$page_url" },
-        },
-      },
-      {
-        $addFields: {
-          pages_count: { $size: "$pages_visited" },
-        },
-      },
-      { $sort: { last_seen: -1 } },
-    ]);
+    const events = await Event.find({}).sort({ timestamp: 1 }).lean();
+    const sessionMap = new Map();
+
+    for (const event of events) {
+      const sessionId = event.session_id;
+      const existing = sessionMap.get(sessionId) || {
+        _id: sessionId,
+        total_events: 0,
+        page_views: 0,
+        clicks: 0,
+        first_seen: null,
+        last_seen: null,
+        pages_visited: new Set(),
+      };
+
+      existing.total_events += 1;
+      if (event.event_type === "page_view") existing.page_views += 1;
+      if (event.event_type === "click") existing.clicks += 1;
+
+      const timestampValue = new Date(event.timestamp).getTime();
+      if (
+        !existing.first_seen ||
+        timestampValue < new Date(existing.first_seen).getTime()
+      ) {
+        existing.first_seen = event.timestamp;
+      }
+      if (
+        !existing.last_seen ||
+        timestampValue > new Date(existing.last_seen).getTime()
+      ) {
+        existing.last_seen = event.timestamp;
+      }
+
+      existing.pages_visited.add(event.page_url);
+      sessionMap.set(sessionId, existing);
+    }
+
+    const sessions = Array.from(sessionMap.values())
+      .map((session) => ({
+        ...session,
+        pages_count: session.pages_visited.size,
+        pages_visited: Array.from(session.pages_visited),
+      }))
+      .sort((a, b) => new Date(b.last_seen) - new Date(a.last_seen));
 
     res.json(sessions);
   } catch (error) {
@@ -114,56 +155,48 @@ router.get("/heatmap", async (req, res) => {
 
 router.get("/stats", async (req, res) => {
   try {
-    const [stats] = await Event.aggregate([
-      {
-        $facet: {
-          overview: [
-            {
-              $group: {
-                _id: null,
-                total_events: { $sum: 1 },
-                total_sessions: { $addToSet: "$session_id" },
-                total_page_views: {
-                  $sum: {
-                    $cond: [{ $eq: ["$event_type", "page_view"] }, 1, 0],
-                  },
-                },
-                total_clicks: {
-                  $sum: { $cond: [{ $eq: ["$event_type", "click"] }, 1, 0] },
-                },
-              },
-            },
-            {
-              $addFields: {
-                total_sessions: { $size: "$total_sessions" },
-              },
-            },
-          ],
-          top_pages: [
-            {
-              $group: {
-                _id: "$page_url",
-                views: { $sum: 1 },
-              },
-            },
-            { $sort: { views: -1 } },
-            { $limit: 5 },
-          ],
-        },
-      },
-    ]);
+    const events = await Event.find({}).lean();
 
-    const overview = stats.overview[0] || {
-      total_events: 0,
-      total_sessions: 0,
-      total_page_views: 0,
-      total_clicks: 0,
-    };
+    const summary = events.reduce(
+      (acc, event) => {
+        acc.total_events += 1;
+        acc.total_sessions.add(event.session_id);
+
+        if (event.event_type === "page_view") {
+          acc.total_page_views += 1;
+        }
+
+        if (event.event_type === "click") {
+          acc.total_clicks += 1;
+        }
+
+        if (!acc.topPages[event.page_url]) {
+          acc.topPages[event.page_url] = 0;
+        }
+        acc.topPages[event.page_url] += 1;
+
+        return acc;
+      },
+      {
+        total_events: 0,
+        total_sessions: new Set(),
+        total_page_views: 0,
+        total_clicks: 0,
+        topPages: {},
+      },
+    );
+
+    const top_pages = Object.entries(summary.topPages)
+      .map(([page_url, views]) => ({ _id: page_url, views }))
+      .sort((a, b) => b.views - a.views)
+      .slice(0, 5);
 
     res.json({
-      ...overview,
-      _id: undefined,
-      top_pages: stats.top_pages,
+      total_events: summary.total_events,
+      total_sessions: summary.total_sessions.size,
+      total_page_views: summary.total_page_views,
+      total_clicks: summary.total_clicks,
+      top_pages,
     });
   } catch (error) {
     console.error("Error fetching stats:", error);
@@ -173,18 +206,24 @@ router.get("/stats", async (req, res) => {
 
 router.get("/pages", async (req, res) => {
   try {
-    const pages = await Event.aggregate([
-      {
-        $group: {
-          _id: "$page_url",
-          total_events: { $sum: 1 },
-          total_clicks: {
-            $sum: { $cond: [{ $eq: ["$event_type", "click"] }, 1, 0] },
-          },
-        },
-      },
-      { $sort: { total_events: -1 } },
-    ]);
+    const events = await Event.find({}).lean();
+    const pageMap = new Map();
+
+    for (const event of events) {
+      const existing = pageMap.get(event.page_url) || {
+        _id: event.page_url,
+        total_events: 0,
+        total_clicks: 0,
+      };
+
+      existing.total_events += 1;
+      if (event.event_type === "click") existing.total_clicks += 1;
+      pageMap.set(event.page_url, existing);
+    }
+
+    const pages = Array.from(pageMap.values()).sort(
+      (a, b) => b.total_events - a.total_events,
+    );
 
     res.json(pages);
   } catch (error) {
